@@ -1,0 +1,98 @@
+[gd_scene load_steps=12 format=2]
+
+[ext_resource path="res://OverworldCharacter.gd" type="Script" id=1]
+
+[sub_resource type="Animation" id=10]
+resource_name = "RESET"
+tracks/0/type = "value"
+tracks/0/path = NodePath("CharacterSprite:hframes")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = false
+tracks/0/keys = {
+"times": PoolRealArray(  ),
+"transitions": PoolRealArray(  ),
+"update": 1,
+"values": [  ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("CharacterSprite:vframes")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = false
+tracks/1/keys = {
+"times": PoolRealArray(  ),
+"transitions": PoolRealArray(  ),
+"update": 1,
+"values": [  ]
+}
+tracks/2/type = "value"
+tracks/2/path = NodePath("CharacterSprite:frame")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/imported = false
+tracks/2/enabled = false
+tracks/2/keys = {
+"times": PoolRealArray(  ),
+"transitions": PoolRealArray(  ),
+"update": 1,
+"values": [  ]
+}
+
+[sub_resource type="AnimationNodeTimeSeek" id=1]
+
+[sub_resource type="AnimationNodeBlendSpace2D" id=2]
+
+[sub_resource type="AnimationNodeBlendSpace2D" id=3]
+
+[sub_resource type="AnimationNodeStateMachineTransition" id=4]
+
+[sub_resource type="AnimationNodeStateMachineTransition" id=5]
+
+[sub_resource type="AnimationNodeStateMachine" id=6]
+states/Idle/node = SubResource( 2 )
+states/Idle/position = Vector2( 558, 97 )
+states/Run/node = SubResource( 3 )
+states/Run/position = Vector2( 386, 97 )
+transitions = [ "Run", "Idle", SubResource( 4 ), "Idle", "Run", SubResource( 5 ) ]
+start_node = "Idle"
+
+[sub_resource type="AnimationNodeBlendTree" id=7]
+graph_offset = Vector2( -391, 83 )
+nodes/Seek/node = SubResource( 1 )
+nodes/Seek/position = Vector2( 120, 160 )
+nodes/StateMachine/node = SubResource( 6 )
+nodes/StateMachine/position = Vector2( -120, 160 )
+nodes/output/position = Vector2( 260, 160 )
+node_connections = [ "output", 0, "Seek", "Seek", 0, "StateMachine" ]
+
+[sub_resource type="AnimationNodeStateMachinePlayback" id=8]
+
+[sub_resource type="CapsuleShape2D" id=9]
+height = 6.0
+
+[node name="Character" type="KinematicBody2D"]
+script = ExtResource( 1 )
+animPlayer = NodePath("AnimationPlayer")
+sprite = NodePath("CharacterSprite")
+
+[node name="CharacterSprite" type="Sprite" parent="."]
+region_rect = Rect2( 0, 0, 96, 96 )
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+anims/RESET = SubResource( 10 )
+
+[node name="AnimationTree" type="AnimationTree" parent="."]
+tree_root = SubResource( 7 )
+anim_player = NodePath("../AnimationPlayer")
+active = true
+parameters/Seek/seek_position = -1.0
+parameters/StateMachine/playback = SubResource( 8 )
+parameters/StateMachine/Idle/blend_position = Vector2( 0, 0 )
+parameters/StateMachine/Run/blend_position = Vector2( 0, 0 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+rotation = 1.5708
+shape = SubResource( 9 )
